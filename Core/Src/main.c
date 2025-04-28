@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "button.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -63,7 +64,12 @@ static void MX_GPIO_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
+  uint8_t count, led_kit_counter = 0;
+
   uint32_t i;
+
+  uint16_t led_pins[] = {LED_0_PIN, LED_1_PIN, LED_2_PIN, LED_3_PIN, LED_4_PIN};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -90,16 +96,38 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  
+  count = 0;
+  
   while (1)
   {
-    for (i = 0; i < 13; i++)
-    {
-      HAL_GPIO_WritePin(KIT_LED_GPIO_Port, KIT_LED_Pin, 0);
-      HAL_Delay(25);
-      HAL_GPIO_WritePin(KIT_LED_GPIO_Port, KIT_LED_Pin, 1);
-      HAL_Delay(50);
+
+    if(button_release(GPIOA, GPIO_PIN_9, 0)) {
+      count += 1;
+      if ((count >> 5) & 1) {
+        count = 0;
+      }
+    }  
+
+    for (i=0;i<5;i++) {
+      if ((count >> i) & 1) {
+        HAL_GPIO_WritePin(GPIOB, led_pins[i], GPIO_PIN_SET);
+      }
+      else {
+        HAL_GPIO_WritePin(GPIOB, led_pins[i], GPIO_PIN_RESET);
+      }
+      HAL_Delay(1);
+    };
+
+    led_kit_counter += 10;
+    
+    if (led_kit_counter >= 205) {
+      HAL_GPIO_WritePin(KIT_LED_GPIO_Port, KIT_LED_Pin, GPIO_PIN_RESET);
+      HAL_Delay(10);
+      HAL_GPIO_WritePin(KIT_LED_GPIO_Port, KIT_LED_Pin, GPIO_PIN_SET);
+      HAL_Delay(1);
+      led_kit_counter = 0;
     }
-    HAL_Delay(800);
 
     /* USER CODE END WHILE */
 
@@ -162,13 +190,26 @@ static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
+  GPIO_InitTypeDef LED_InitStruct = {0};
+
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE(); /* Essa linha */
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(KIT_LED_GPIO_Port, KIT_LED_Pin, GPIO_PIN_RESET);
+
+  /*HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_0_PIN | LED_1_PIN | LED_2_PIN | LED_3_PIN | LED_4_PIN, GPIO_PIN_RESET);*/
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_All, GPIO_PIN_RESET);
+  
+  LED_InitStruct.Pin = LED_0_PIN | LED_1_PIN | LED_2_PIN | LED_3_PIN | LED_4_PIN;
+  LED_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  LED_InitStruct.Pull = GPIO_NOPULL;
+  LED_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &LED_InitStruct);
+
 
   /*Configure GPIO pin : KIT_LED_Pin */
   GPIO_InitStruct.Pin = KIT_LED_Pin;
@@ -176,6 +217,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(KIT_LED_GPIO_Port, &GPIO_InitStruct);
+
+  GPIO_InitTypeDef GPIO_PIN_Init_Struct = {0};
+
+  GPIO_PIN_Init_Struct.Pin = GPIO_PIN_9;
+  GPIO_PIN_Init_Struct.Mode = GPIO_MODE_INPUT;
+  GPIO_PIN_Init_Struct.Pull = GPIO_NOPULL;
+  GPIO_PIN_Init_Struct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_PIN_Init_Struct);
 
 }
 
