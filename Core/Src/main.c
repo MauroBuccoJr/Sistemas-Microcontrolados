@@ -61,15 +61,42 @@ static void MX_GPIO_Init(void);
   * @brief  The application entry point.
   * @retval int
   */
+
+
+uint16_t read_distance(void) {
+  uint8_t timeout = 1000;
+  uint8_t i = 0;
+  uint16_t ticks = 0;
+
+  while (!HAL_GPIO_ReadPin(GPIOB, ECHO_PIN)) {
+    i += 1;
+    if (i >= timeout) {
+      break;
+    }
+  };
+
+  while (HAL_GPIO_ReadPin(GPIOB, ECHO_PIN)) {
+    ticks += 1;
+    if (ticks > 100) {
+      break;
+    }
+  };
+
+  return 600;
+
+  /*return ticks;*/
+}
+
+
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-  uint8_t count, led_kit_counter = 0;
+  uint16_t count = 0;
+  double distance = 0.0;
 
-  uint32_t i;
-
-  uint16_t led_pins[] = {LED_0_PIN, LED_1_PIN, LED_2_PIN, LED_3_PIN, LED_4_PIN};
+  uint16_t led_pins[] = {LED_0_PIN, LED_1_PIN, LED_2_PIN};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -102,31 +129,24 @@ int main(void)
   while (1)
   {
 
-    if(button_release(GPIOA, GPIO_PIN_9, 0)) {
-      count += 1;
-      if ((count >> 5) & 1) {
-        count = 0;
-      }
-    }  
+    if(button_release(GPIOA, BUTTON_PIN, GPIO_PIN_RESET)) {
+      HAL_GPIO_WritePin(GPIOB, TRIGGER_PIN, GPIO_PIN_SET);
+      HAL_Delay(120);
+      HAL_GPIO_WritePin(GPIOB, TRIGGER_PIN, GPIO_PIN_RESET);
 
-    for (i=0;i<5;i++) {
-      if ((count >> i) & 1) {
-        HAL_GPIO_WritePin(GPIOB, led_pins[i], GPIO_PIN_SET);
+      count = read_distance();
+      distance = (double) (count / PULSE_RATIO) * 340.0 * 3.6; /* Velocidade do som = 340 km/h = 340 * 3.6 m/s */
+
+      if (distance < CLOSE_DISTANCE && distance) {
+        HAL_GPIO_WritePin(GPIOB, LED_0_PIN, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOB, LED_1_PIN, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOB, LED_2_PIN, GPIO_PIN_RESET);
       }
       else {
-        HAL_GPIO_WritePin(GPIOB, led_pins[i], GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOB, LED_0_PIN, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOB, LED_1_PIN, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOB, LED_2_PIN, GPIO_PIN_SET);
       }
-      HAL_Delay(1);
-    };
-
-    led_kit_counter += 10;
-    
-    if (led_kit_counter >= 205) {
-      HAL_GPIO_WritePin(KIT_LED_GPIO_Port, KIT_LED_Pin, GPIO_PIN_RESET);
-      HAL_Delay(10);
-      HAL_GPIO_WritePin(KIT_LED_GPIO_Port, KIT_LED_Pin, GPIO_PIN_SET);
-      HAL_Delay(1);
-      led_kit_counter = 0;
     }
 
     /* USER CODE END WHILE */
@@ -203,13 +223,13 @@ static void MX_GPIO_Init(void)
 
   /*HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_0_PIN | LED_1_PIN | LED_2_PIN | LED_3_PIN | LED_4_PIN, GPIO_PIN_RESET);*/
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_All, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_All, GPIO_PIN_RESET);
   
-  LED_InitStruct.Pin = LED_0_PIN | LED_1_PIN | LED_2_PIN | LED_3_PIN | LED_4_PIN;
+  LED_InitStruct.Pin = LED_0_PIN | LED_1_PIN | LED_2_PIN;
   LED_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   LED_InitStruct.Pull = GPIO_NOPULL;
   LED_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &LED_InitStruct);
-
 
   /*Configure GPIO pin : KIT_LED_Pin */
   GPIO_InitStruct.Pin = KIT_LED_Pin;
@@ -218,13 +238,29 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(KIT_LED_GPIO_Port, &GPIO_InitStruct);
 
-  GPIO_InitTypeDef GPIO_PIN_Init_Struct = {0};
+  GPIO_InitTypeDef GPIO_Button_Pin_Init_Struct = {0};
 
-  GPIO_PIN_Init_Struct.Pin = GPIO_PIN_9;
-  GPIO_PIN_Init_Struct.Mode = GPIO_MODE_INPUT;
-  GPIO_PIN_Init_Struct.Pull = GPIO_NOPULL;
-  GPIO_PIN_Init_Struct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_PIN_Init_Struct);
+  GPIO_Button_Pin_Init_Struct.Pin = BUTTON_PIN;
+  GPIO_Button_Pin_Init_Struct.Mode = GPIO_MODE_INPUT;
+  GPIO_Button_Pin_Init_Struct.Pull = GPIO_NOPULL;
+  GPIO_Button_Pin_Init_Struct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_Button_Pin_Init_Struct);
+
+  GPIO_InitTypeDef GPIO_Trigger_Pin_Init_Struct = {0};
+
+  GPIO_Trigger_Pin_Init_Struct.Pin = TRIGGER_PIN;
+  GPIO_Trigger_Pin_Init_Struct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_Trigger_Pin_Init_Struct.Pull = GPIO_NOPULL;
+  GPIO_Trigger_Pin_Init_Struct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_Trigger_Pin_Init_Struct);
+
+  GPIO_InitTypeDef GPIO_Echo_Pin_Init_Struct = {0};
+
+  GPIO_Echo_Pin_Init_Struct.Pin = ECHO_PIN;
+  GPIO_Echo_Pin_Init_Struct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_Echo_Pin_Init_Struct.Pull = GPIO_NOPULL;
+  GPIO_Echo_Pin_Init_Struct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOA, &GPIO_Echo_Pin_Init_Struct);
 
 }
 

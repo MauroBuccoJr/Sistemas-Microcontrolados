@@ -116,4 +116,3 @@ uint16_t button_release(GPIO_TypeDef* ui32Port, uint16_t ui16Pin, uint16_t activ
         return 0;
     }    
 }
-

@@ -60,12 +60,18 @@ void Error_Handler(void);
 #define KIT_LED_Pin GPIO_PIN_13
 #define KIT_LED_GPIO_Port GPIOC
 
+#define BUTTON_PIN GPIO_PIN_9
+
 #define LED_0_PIN GPIO_PIN_5
 #define LED_1_PIN GPIO_PIN_6
 #define LED_2_PIN GPIO_PIN_7
-#define LED_3_PIN GPIO_PIN_8
-#define LED_4_PIN GPIO_PIN_9
-#define LED_PIN_GPIO_Port GPIOB
+
+#define ECHO_PIN GPIO_PIN_6
+#define TRIGGER_PIN GPIO_PIN_7
+
+#define PULSE_RATIO 100000.0
+
+#define CLOSE_DISTANCE 0.3
 
 /* USER CODE BEGIN Private defines */
 
