@@ -64,25 +64,29 @@ static void MX_GPIO_Init(void);
 
 
 uint16_t read_distance(void) {
-  uint8_t timeout = 1000;
-  uint8_t i = 0;
   uint16_t ticks = 0;
+  uint8_t i = 0;
 
-  while (!HAL_GPIO_ReadPin(GPIOB, ECHO_PIN)) {
+  HAL_GPIO_WritePin(GPIOA, TRIGGER_PIN, GPIO_PIN_SET);
+  HAL_Delay(50);
+  HAL_GPIO_WritePin(GPIOA, TRIGGER_PIN, GPIO_PIN_RESET);
+
+
+  while (button(GPIOA, ECHO_PIN, GPIO_PIN_RESET)) {
     i += 1;
-    if (i >= timeout) {
+    if (i>10000) {
       break;
     }
-  };
+  }
 
-  while (HAL_GPIO_ReadPin(GPIOB, ECHO_PIN)) {
+  while (button(GPIOA, ECHO_PIN, GPIO_PIN_SET)) {
     ticks += 1;
-    if (ticks > 100) {
+    if (ticks>10000){
       break;
     }
   };
 
-  return 600;
+  return ticks;
 
   /*return ticks;*/
 }
@@ -125,17 +129,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   
   count = 0;
-  
+
   while (1)
   {
 
     if(button_release(GPIOA, BUTTON_PIN, GPIO_PIN_RESET)) {
-      HAL_GPIO_WritePin(GPIOB, TRIGGER_PIN, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOA, TRIGGER_PIN, GPIO_PIN_SET);
       HAL_Delay(120);
-      HAL_GPIO_WritePin(GPIOB, TRIGGER_PIN, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, TRIGGER_PIN, GPIO_PIN_RESET);
 
       count = read_distance();
-      distance = (double) (count / PULSE_RATIO) * 340.0 * 3.6; /* Velocidade do som = 340 km/h = 340 * 3.6 m/s */
+      //count = 5000;
+      distance = (double) (count / PULSE_RATIO); /* Velocidade do som = 340 km/h = 340 * 3.6 m/s */
 
       if (distance < CLOSE_DISTANCE && distance) {
         HAL_GPIO_WritePin(GPIOB, LED_0_PIN, GPIO_PIN_SET);
@@ -147,7 +152,14 @@ int main(void)
         HAL_GPIO_WritePin(GPIOB, LED_1_PIN, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOB, LED_2_PIN, GPIO_PIN_SET);
       }
+
+      distance = 0;
+
     }
+
+    else {
+      
+    };
 
     /* USER CODE END WHILE */
 
@@ -257,9 +269,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_Echo_Pin_Init_Struct = {0};
 
   GPIO_Echo_Pin_Init_Struct.Pin = ECHO_PIN;
-  GPIO_Echo_Pin_Init_Struct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_Echo_Pin_Init_Struct.Mode = GPIO_MODE_INPUT;
   GPIO_Echo_Pin_Init_Struct.Pull = GPIO_NOPULL;
-  GPIO_Echo_Pin_Init_Struct.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_Echo_Pin_Init_Struct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_Echo_Pin_Init_Struct);
 
 }

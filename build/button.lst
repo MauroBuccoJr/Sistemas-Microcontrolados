@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 1
+ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 1
   28:Core/Src/button.c ****  * @return 255 if the pin was in the active state for given period, 0 otherwise
   29:Core/Src/button.c ****  */
   30:Core/Src/button.c **** uint16_t button(GPIO_TypeDef* ui32Port, uint16_t ui16Pin, uint16_t active_state)
-ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 2
+ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s 			page 2
 
 
   31:Core/Src/button.c **** {
@@ -84,9 +84,9 @@ ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 1
   48 000e 3B80     		strh	r3, [r7]	@ movhi
   32:Core/Src/button.c ****     //lê o botão 'tries' vezes durante 'time' milissegundos
   33:Core/Src/button.c ****     //o botão deve passar pelo menos a metade final do período em active_state
-  34:Core/Src/button.c ****     uint32_t i,tries = 5;
+  34:Core/Src/button.c ****     uint32_t i,tries = 2;
   49              		.loc 1 34 16
-  50 0010 0523     		movs	r3, #5
+  50 0010 0223     		movs	r3, #2
   51 0012 FB60     		str	r3, [r7, #12]
   35:Core/Src/button.c ****     uint8_t pressed = 0, unpressed = 0;
   52              		.loc 1 35 13
@@ -106,7 +106,7 @@ ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 1
   62 0020 0023     		movs	r3, #0
   63 0022 7B61     		str	r3, [r7, #20]
   64              		.loc 1 39 5
-  65 0024 18E0     		b	.L2
+  65 0024 15E0     		b	.L2
   66              	.L5:
   40:Core/Src/button.c ****     {
   41:Core/Src/button.c ****         
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 1
   71 002c FFF7FEFF 		bl	HAL_GPIO_ReadPin
   72 0030 0346     		mov	r3, r0
   73              		.loc 1 42 11 discriminator 1
-ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 3
+ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s 			page 3
 
 
   74 0032 002B     		cmp	r3, #0
@@ -148,102 +148,99 @@ ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 1
   90 0048 0023     		movs	r3, #0
   91 004a FB74     		strb	r3, [r7, #19]
   92              	.L4:
+  39:Core/Src/button.c ****     {
+  93              		.loc 1 39 22 discriminator 2
+  94 004c 7B69     		ldr	r3, [r7, #20]
+  95 004e 0133     		adds	r3, r3, #1
+  96 0050 7B61     		str	r3, [r7, #20]
+  97              	.L2:
+  39:Core/Src/button.c ****     {
+  98              		.loc 1 39 14 discriminator 1
+  99 0052 7A69     		ldr	r2, [r7, #20]
+ 100 0054 FB68     		ldr	r3, [r7, #12]
+ 101 0056 9A42     		cmp	r2, r3
+ 102 0058 E5D3     		bcc	.L5
   51:Core/Src/button.c ****         }
-  52:Core/Src/button.c ****         HAL_Delay(1);
-  93              		.loc 1 52 9
-  94 004c 0120     		movs	r0, #1
-  95 004e FFF7FEFF 		bl	HAL_Delay
-  39:Core/Src/button.c ****     {
-  96              		.loc 1 39 22 discriminator 2
-  97 0052 7B69     		ldr	r3, [r7, #20]
-  98 0054 0133     		adds	r3, r3, #1
-  99 0056 7B61     		str	r3, [r7, #20]
- 100              	.L2:
-  39:Core/Src/button.c ****     {
- 101              		.loc 1 39 14 discriminator 1
- 102 0058 7A69     		ldr	r2, [r7, #20]
- 103 005a FB68     		ldr	r3, [r7, #12]
- 104 005c 9A42     		cmp	r2, r3
- 105 005e E2D3     		bcc	.L5
+  52:Core/Src/button.c ****         //HAL_Delay(1);
   53:Core/Src/button.c ****     }
   54:Core/Src/button.c ****     if(active_state)
- 106              		.loc 1 54 7
- 107 0060 3B88     		ldrh	r3, [r7]
- 108 0062 002B     		cmp	r3, #0
- 109 0064 07D0     		beq	.L6
+ 103              		.loc 1 54 7
+ 104 005a 3B88     		ldrh	r3, [r7]
+ 105 005c 002B     		cmp	r3, #0
+ 106 005e 07D0     		beq	.L6
   55:Core/Src/button.c ****     {
   56:Core/Src/button.c ****         if (pressed>(tries/2))
- 110              		.loc 1 56 20
- 111 0066 FA7C     		ldrb	r2, [r7, #19]	@ zero_extendqisi2
- 112              		.loc 1 56 27
- 113 0068 FB68     		ldr	r3, [r7, #12]
- 114 006a 5B08     		lsrs	r3, r3, #1
-ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 4
+ 107              		.loc 1 56 20
+ 108 0060 FA7C     		ldrb	r2, [r7, #19]	@ zero_extendqisi2
+ 109              		.loc 1 56 27
+ 110 0062 FB68     		ldr	r3, [r7, #12]
+ 111 0064 5B08     		lsrs	r3, r3, #1
+ 112              		.loc 1 56 12
+ 113 0066 9A42     		cmp	r2, r3
+ 114 0068 09D9     		bls	.L7
+ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s 			page 4
 
 
- 115              		.loc 1 56 12
- 116 006c 9A42     		cmp	r2, r3
- 117 006e 09D9     		bls	.L7
   57:Core/Src/button.c ****         {
   58:Core/Src/button.c ****             ret = 0xFF;
- 118              		.loc 1 58 17
- 119 0070 FF23     		movs	r3, #255
- 120 0072 3B82     		strh	r3, [r7, #16]	@ movhi
- 121 0074 06E0     		b	.L7
- 122              	.L6:
+ 115              		.loc 1 58 17
+ 116 006a FF23     		movs	r3, #255
+ 117 006c 3B82     		strh	r3, [r7, #16]	@ movhi
+ 118 006e 06E0     		b	.L7
+ 119              	.L6:
   59:Core/Src/button.c ****         }
   60:Core/Src/button.c ****     }
   61:Core/Src/button.c ****     else
   62:Core/Src/button.c ****     {
   63:Core/Src/button.c ****         if (unpressed>(tries/2))
- 123              		.loc 1 63 22
- 124 0076 BA7C     		ldrb	r2, [r7, #18]	@ zero_extendqisi2
- 125              		.loc 1 63 29
- 126 0078 FB68     		ldr	r3, [r7, #12]
- 127 007a 5B08     		lsrs	r3, r3, #1
- 128              		.loc 1 63 12
- 129 007c 9A42     		cmp	r2, r3
- 130 007e 01D9     		bls	.L7
+ 120              		.loc 1 63 22
+ 121 0070 BA7C     		ldrb	r2, [r7, #18]	@ zero_extendqisi2
+ 122              		.loc 1 63 29
+ 123 0072 FB68     		ldr	r3, [r7, #12]
+ 124 0074 5B08     		lsrs	r3, r3, #1
+ 125              		.loc 1 63 12
+ 126 0076 9A42     		cmp	r2, r3
+ 127 0078 01D9     		bls	.L7
   64:Core/Src/button.c ****         {
   65:Core/Src/button.c ****             ret = 0xFF;
- 131              		.loc 1 65 17
- 132 0080 FF23     		movs	r3, #255
- 133 0082 3B82     		strh	r3, [r7, #16]	@ movhi
- 134              	.L7:
+ 128              		.loc 1 65 17
+ 129 007a FF23     		movs	r3, #255
+ 130 007c 3B82     		strh	r3, [r7, #16]	@ movhi
+ 131              	.L7:
   66:Core/Src/button.c ****         }
   67:Core/Src/button.c ****     }    
   68:Core/Src/button.c ****     return ret;
- 135              		.loc 1 68 12
- 136 0084 3B8A     		ldrh	r3, [r7, #16]
+ 132              		.loc 1 68 12
+ 133 007e 3B8A     		ldrh	r3, [r7, #16]
   69:Core/Src/button.c **** }
- 137              		.loc 1 69 1
- 138 0086 1846     		mov	r0, r3
- 139 0088 1837     		adds	r7, r7, #24
- 140              	.LCFI3:
- 141              		.cfi_def_cfa_offset 8
- 142 008a BD46     		mov	sp, r7
- 143              	.LCFI4:
- 144              		.cfi_def_cfa_register 13
- 145              		@ sp needed
- 146 008c 80BD     		pop	{r7, pc}
- 147              		.cfi_endproc
- 148              	.LFE130:
- 150              		.section	.text.button_release,"ax",%progbits
- 151              		.align	1
- 152              		.global	button_release
- 153              		.syntax unified
- 154              		.thumb
- 155              		.thumb_func
- 157              	button_release:
- 158              	.LFB131:
+ 134              		.loc 1 69 1
+ 135 0080 1846     		mov	r0, r3
+ 136 0082 1837     		adds	r7, r7, #24
+ 137              	.LCFI3:
+ 138              		.cfi_def_cfa_offset 8
+ 139 0084 BD46     		mov	sp, r7
+ 140              	.LCFI4:
+ 141              		.cfi_def_cfa_register 13
+ 142              		@ sp needed
+ 143 0086 80BD     		pop	{r7, pc}
+ 144              		.cfi_endproc
+ 145              	.LFE130:
+ 147              		.section	.text.button_release,"ax",%progbits
+ 148              		.align	1
+ 149              		.global	button_release
+ 150              		.syntax unified
+ 151              		.thumb
+ 152              		.thumb_func
+ 154              	button_release:
+ 155              	.LFB131:
   70:Core/Src/button.c **** 
   71:Core/Src/button.c **** /* Includes ------------------------------------------------------------------*/
-ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 5
-
-
   72:Core/Src/button.c **** #include "button.h"
   73:Core/Src/button.c **** 
   74:Core/Src/button.c **** /**
+ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s 			page 5
+
+
   75:Core/Src/button.c ****  * @brief Button debounce and release detect.
   76:Core/Src/button.c ****  *
   77:Core/Src/button.c ****  * Function eliminates the influence of contact flickering upon pressing a button (debouncing). 
@@ -269,127 +266,125 @@ ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 1
   97:Core/Src/button.c ****  */
   98:Core/Src/button.c **** uint16_t button_release(GPIO_TypeDef* ui32Port, uint16_t ui16Pin, uint16_t active_state)
   99:Core/Src/button.c **** {
- 159              		.loc 1 99 1
- 160              		.cfi_startproc
- 161              		@ args = 0, pretend = 0, frame = 8
- 162              		@ frame_needed = 1, uses_anonymous_args = 0
- 163 0000 80B5     		push	{r7, lr}
- 164              	.LCFI5:
- 165              		.cfi_def_cfa_offset 8
- 166              		.cfi_offset 7, -8
- 167              		.cfi_offset 14, -4
- 168 0002 82B0     		sub	sp, sp, #8
- 169              	.LCFI6:
- 170              		.cfi_def_cfa_offset 16
- 171 0004 00AF     		add	r7, sp, #0
- 172              	.LCFI7:
- 173              		.cfi_def_cfa_register 7
- 174 0006 7860     		str	r0, [r7, #4]
- 175 0008 0B46     		mov	r3, r1
- 176 000a 7B80     		strh	r3, [r7, #2]	@ movhi
- 177 000c 1346     		mov	r3, r2	@ movhi
- 178 000e 3B80     		strh	r3, [r7]	@ movhi
+ 156              		.loc 1 99 1
+ 157              		.cfi_startproc
+ 158              		@ args = 0, pretend = 0, frame = 8
+ 159              		@ frame_needed = 1, uses_anonymous_args = 0
+ 160 0000 80B5     		push	{r7, lr}
+ 161              	.LCFI5:
+ 162              		.cfi_def_cfa_offset 8
+ 163              		.cfi_offset 7, -8
+ 164              		.cfi_offset 14, -4
+ 165 0002 82B0     		sub	sp, sp, #8
+ 166              	.LCFI6:
+ 167              		.cfi_def_cfa_offset 16
+ 168 0004 00AF     		add	r7, sp, #0
+ 169              	.LCFI7:
+ 170              		.cfi_def_cfa_register 7
+ 171 0006 7860     		str	r0, [r7, #4]
+ 172 0008 0B46     		mov	r3, r1
+ 173 000a 7B80     		strh	r3, [r7, #2]	@ movhi
+ 174 000c 1346     		mov	r3, r2	@ movhi
+ 175 000e 3B80     		strh	r3, [r7]	@ movhi
  100:Core/Src/button.c ****     if(button(ui32Port,ui16Pin,active_state))
- 179              		.loc 1 100 8
- 180 0010 3A88     		ldrh	r2, [r7]
- 181 0012 7B88     		ldrh	r3, [r7, #2]
- 182 0014 1946     		mov	r1, r3
- 183 0016 7868     		ldr	r0, [r7, #4]
- 184 0018 FFF7FEFF 		bl	button
- 185 001c 0346     		mov	r3, r0
- 186              		.loc 1 100 7 discriminator 1
-ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 6
-
-
- 187 001e 002B     		cmp	r3, #0
- 188 0020 17D0     		beq	.L10
+ 176              		.loc 1 100 8
+ 177 0010 3A88     		ldrh	r2, [r7]
+ 178 0012 7B88     		ldrh	r3, [r7, #2]
+ 179 0014 1946     		mov	r1, r3
+ 180 0016 7868     		ldr	r0, [r7, #4]
+ 181 0018 FFF7FEFF 		bl	button
+ 182 001c 0346     		mov	r3, r0
+ 183              		.loc 1 100 7 discriminator 1
+ 184 001e 002B     		cmp	r3, #0
+ 185 0020 17D0     		beq	.L10
  101:Core/Src/button.c ****     {
+ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s 			page 6
+
+
  102:Core/Src/button.c ****         if(active_state)
- 189              		.loc 1 102 11
- 190 0022 3B88     		ldrh	r3, [r7]
- 191 0024 002B     		cmp	r3, #0
- 192 0026 09D0     		beq	.L16
+ 186              		.loc 1 102 11
+ 187 0022 3B88     		ldrh	r3, [r7]
+ 188 0024 002B     		cmp	r3, #0
+ 189 0026 09D0     		beq	.L16
  103:Core/Src/button.c ****         {
  104:Core/Src/button.c ****             while (HAL_GPIO_ReadPin(ui32Port, ui16Pin))
- 193              		.loc 1 104 19
- 194 0028 00BF     		nop
- 195              	.L12:
- 196              		.loc 1 104 20 discriminator 1
- 197 002a 7B88     		ldrh	r3, [r7, #2]
- 198 002c 1946     		mov	r1, r3
- 199 002e 7868     		ldr	r0, [r7, #4]
- 200 0030 FFF7FEFF 		bl	HAL_GPIO_ReadPin
- 201 0034 0346     		mov	r3, r0
- 202 0036 002B     		cmp	r3, #0
- 203 0038 F7D1     		bne	.L12
- 204 003a 08E0     		b	.L13
- 205              	.L16:
+ 190              		.loc 1 104 19
+ 191 0028 00BF     		nop
+ 192              	.L12:
+ 193              		.loc 1 104 20 discriminator 1
+ 194 002a 7B88     		ldrh	r3, [r7, #2]
+ 195 002c 1946     		mov	r1, r3
+ 196 002e 7868     		ldr	r0, [r7, #4]
+ 197 0030 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 198 0034 0346     		mov	r3, r0
+ 199 0036 002B     		cmp	r3, #0
+ 200 0038 F7D1     		bne	.L12
+ 201 003a 08E0     		b	.L13
+ 202              	.L16:
  105:Core/Src/button.c ****                 ;
  106:Core/Src/button.c ****         }
  107:Core/Src/button.c ****         else
  108:Core/Src/button.c ****         {
  109:Core/Src/button.c ****             while (!HAL_GPIO_ReadPin(ui32Port, ui16Pin))
- 206              		.loc 1 109 19
- 207 003c 00BF     		nop
- 208              	.L14:
- 209              		.loc 1 109 21 discriminator 1
- 210 003e 7B88     		ldrh	r3, [r7, #2]
- 211 0040 1946     		mov	r1, r3
- 212 0042 7868     		ldr	r0, [r7, #4]
- 213 0044 FFF7FEFF 		bl	HAL_GPIO_ReadPin
- 214 0048 0346     		mov	r3, r0
- 215              		.loc 1 109 20 discriminator 1
- 216 004a 002B     		cmp	r3, #0
- 217 004c F7D0     		beq	.L14
- 218              	.L13:
+ 203              		.loc 1 109 19
+ 204 003c 00BF     		nop
+ 205              	.L14:
+ 206              		.loc 1 109 21 discriminator 1
+ 207 003e 7B88     		ldrh	r3, [r7, #2]
+ 208 0040 1946     		mov	r1, r3
+ 209 0042 7868     		ldr	r0, [r7, #4]
+ 210 0044 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 211 0048 0346     		mov	r3, r0
+ 212              		.loc 1 109 20 discriminator 1
+ 213 004a 002B     		cmp	r3, #0
+ 214 004c F7D0     		beq	.L14
+ 215              	.L13:
  110:Core/Src/button.c ****                 ;
  111:Core/Src/button.c ****         }
  112:Core/Src/button.c ****         return 0xFF;
- 219              		.loc 1 112 16
- 220 004e FF23     		movs	r3, #255
- 221 0050 00E0     		b	.L15
- 222              	.L10:
+ 216              		.loc 1 112 16
+ 217 004e FF23     		movs	r3, #255
+ 218 0050 00E0     		b	.L15
+ 219              	.L10:
  113:Core/Src/button.c ****     }
  114:Core/Src/button.c ****     else
  115:Core/Src/button.c ****     {
  116:Core/Src/button.c ****         return 0;
- 223              		.loc 1 116 16
- 224 0052 0023     		movs	r3, #0
- 225              	.L15:
+ 220              		.loc 1 116 16
+ 221 0052 0023     		movs	r3, #0
+ 222              	.L15:
  117:Core/Src/button.c ****     }    
  118:Core/Src/button.c **** }
-ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 7
+ 223              		.loc 1 118 1
+ 224 0054 1846     		mov	r0, r3
+ 225 0056 0837     		adds	r7, r7, #8
+ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s 			page 7
 
 
- 226              		.loc 1 118 1
- 227 0054 1846     		mov	r0, r3
- 228 0056 0837     		adds	r7, r7, #8
- 229              	.LCFI8:
- 230              		.cfi_def_cfa_offset 8
- 231 0058 BD46     		mov	sp, r7
- 232              	.LCFI9:
- 233              		.cfi_def_cfa_register 13
- 234              		@ sp needed
- 235 005a 80BD     		pop	{r7, pc}
- 236              		.cfi_endproc
- 237              	.LFE131:
- 239              		.text
- 240              	.Letext0:
- 241              		.file 2 "C:/tools/arm-gnu-toolchain-13.2.rel1-mingw-w64-i686-arm-none-eabi/arm-none-eabi/include/m
- 242              		.file 3 "C:/tools/arm-gnu-toolchain-13.2.rel1-mingw-w64-i686-arm-none-eabi/arm-none-eabi/include/s
- 243              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
- 244              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
- 245              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
-ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s 			page 8
+ 226              	.LCFI8:
+ 227              		.cfi_def_cfa_offset 8
+ 228 0058 BD46     		mov	sp, r7
+ 229              	.LCFI9:
+ 230              		.cfi_def_cfa_register 13
+ 231              		@ sp needed
+ 232 005a 80BD     		pop	{r7, pc}
+ 233              		.cfi_endproc
+ 234              	.LFE131:
+ 236              		.text
+ 237              	.Letext0:
+ 238              		.file 2 "C:/tools/arm-gnu-toolchain-13.2.rel1-mingw-w64-i686-arm-none-eabi/arm-none-eabi/include/m
+ 239              		.file 3 "C:/tools/arm-gnu-toolchain-13.2.rel1-mingw-w64-i686-arm-none-eabi/arm-none-eabi/include/s
+ 240              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
+ 241              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ARM GAS  C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s 			page 8
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 button.c
-C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s:21     .text.button:00000000 $t
-C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s:27     .text.button:00000000 button
-C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s:151    .text.button_release:00000000 $t
-C:\Users\DAELT-~1\AppData\Local\Temp\cc9SZ0go.s:157    .text.button_release:00000000 button_release
+C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s:21     .text.button:00000000 $t
+C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s:27     .text.button:00000000 button
+C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s:148    .text.button_release:00000000 $t
+C:\Users\DAELT-~1\AppData\Local\Temp\ccnOa6wb.s:154    .text.button_release:00000000 button_release
 
 UNDEFINED SYMBOLS
 HAL_GPIO_ReadPin
-HAL_Delay

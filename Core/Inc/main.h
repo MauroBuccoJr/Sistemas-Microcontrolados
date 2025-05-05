@@ -69,9 +69,9 @@ void Error_Handler(void);
 #define ECHO_PIN GPIO_PIN_6
 #define TRIGGER_PIN GPIO_PIN_7
 
-#define PULSE_RATIO 100000.0
+#define PULSE_RATIO 2.5
 
-#define CLOSE_DISTANCE 0.3
+#define CLOSE_DISTANCE 100
 
 /* USER CODE BEGIN Private defines */
 

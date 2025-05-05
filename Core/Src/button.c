@@ -31,7 +31,7 @@ uint16_t button(GPIO_TypeDef* ui32Port, uint16_t ui16Pin, uint16_t active_state)
 {
     //lê o botão 'tries' vezes durante 'time' milissegundos
     //o botão deve passar pelo menos a metade final do período em active_state
-    uint32_t i,tries = 5;
+    uint32_t i,tries = 2;
     uint8_t pressed = 0, unpressed = 0;
     uint16_t ret = 0;
     
@@ -49,7 +49,7 @@ uint16_t button(GPIO_TypeDef* ui32Port, uint16_t ui16Pin, uint16_t active_state)
             unpressed++;
             pressed = 0;
         }
-        HAL_Delay(1);
+        //HAL_Delay(1);
     }
     if(active_state)
     {
