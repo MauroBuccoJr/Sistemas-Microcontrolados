@@ -330,7 +330,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : LED_1_Pin LED_2_Pin LED_3_Pin LED_4_Pin
                            LED_5_Pin */
-  GPIO_InitStruct.Pin = LED_0_Pin|LED_1_Pin;
+  GPIO_InitStruct.Pin = LED_0_PIN|LED_1_PIN;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
