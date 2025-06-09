@@ -39,7 +39,10 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-TIM_HandleTypeDef htim4;
+TIM_HandleTypeDef htim4; /* PWM */
+TIM_HandleTypeDef htim3; /* PWM INC/DEC */
+
+uint_16 time_count = 0;
 
 /* USER CODE BEGIN PV */
 volatile uint32_t gElapsed;
@@ -88,10 +91,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM3_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1);
   HAL_TIM_IC_Start(&htim4,TIM_CHANNEL_1);
-  HAL_TIM_IC_Start_IT(&htim4,TIM_CHANNEL_2);
+  HAL_TIM_IC_Start(&htim4,TIM_CHANNEL_2);
+ 
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -102,20 +108,7 @@ int main(void)
     {
       while (!HAL_GPIO_ReadPin(BUTTON_1_GPIO_Port, BUTTON_1_Pin));
     }
-    HAL_GPIO_WritePin(HCSR04_TRIGGER_GPIO_Port,HCSR04_TRIGGER_Pin, 1);
     HAL_Delay(1);
-    htim4.Instance->CNT = 0;
-    HAL_TIM_IC_Start(&htim4, TIM_CHANNEL_1);
-    HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_2);
-    gElapsed = 0;
-    timeout = 0;
-    HAL_GPIO_WritePin(HCSR04_TRIGGER_GPIO_Port,HCSR04_TRIGGER_Pin, 0);
-    while((gElapsed==0)&&(timeout<100000))
-    {
-      timeout++;
-    }    
-    //d_mm = ;
-    HAL_Delay(50);
   }
     /* USER CODE END WHILE */
 
@@ -234,6 +227,46 @@ static void MX_TIM4_Init(void)
 
 }
 
+static void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 96-1;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 1000-1;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
+
+}
+
 static void MX_TIM4_Init(void)
 {
 
@@ -253,7 +286,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 96-1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 65535;
+  htim4.Init.Period = 58-1;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
  
@@ -346,15 +379,32 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+
+
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-  if(htim == &htim4)
+  if(htim == &htim3)
   { 
-    if (htim4.Channel == HAL_TIM_ACTIVE_CHANNEL_2)
-    {   
-      gElapsed = htim4.Instance->CCR2 - htim4.Instance->CCR1;   
-      HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
-      HAL_TIM_IC_Stop_IT(&htim4, TIM_CHANNEL_2);       
+    if (htim3.Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+    {
+      time_count += 100;
+      if (time_count <= 4000) {
+       TIM3->CCR1 += 100;
+      }
+      else if (time_count <= 6000) {
+       TIM3->CCR1 -= 200;
+      }
+      else {
+       time_count = 0;
+      }
+     
+      /*if (TIM3->CCR1 <= TIM3->ARR) {
+       TIM3->CCR1 += 100;
+      }
+      else if (TIM3->CCR1 > 0) {
+        TIM
+      }*/
+      
     }
   }
 }
